@@ -26,6 +26,7 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
 @Configuration
+@org.springframework.context.annotation.PropertySource("classpath:tuning.properties")
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Autowired
@@ -43,9 +44,10 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.requiresChannel(channel ->
 						channel.requestMatchers(request -> request.getHeader("x-forwarded-port") != null).requiresSecure())
 				.authorizeRequests(req ->
-						req.mvcMatchers("/admin", "/admin/**").denyAll()
-								.mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
-								.mvcMatchers("/api/**").denyAll()
+						req.antMatchers("/h2-web/**").permitAll()
+							.mvcMatchers("/admin", "/admin/**").denyAll()
+							.mvcMatchers(HttpMethod.GET, "/api/**").permitAll()
+							.mvcMatchers("/api/**").denyAll()
 				)
 				.oauth2Login(login -> login
 						.defaultSuccessUrl("/admin").loginPage("/signin")
